@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Master Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+        h1.title {
+            font-size: 3em;
+            color: #ffd700;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ff8c00;
+            margin-bottom: 10px;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ff8c00; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ff4500; }
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .btn {
+            background: linear-gradient(45deg, #ff8c00, #ff0000);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5em;
+            font-family: 'Prompt', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+        .hidden { display: none !important; }
+        
+        /* Game Screen */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #00ffff;
+        }
+        .question-box {
+            font-size: 1.5em;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+        .boss-warning {
+            color: #ff0033;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px red;
+            margin-bottom: 10px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            border: 2px solid #00ffff;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            text-align: center;
+            font-family: 'Prompt', sans-serif;
+            margin-bottom: 20px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        .timer-bar-container {
+            width: 100%;
+            height: 15px;
+            background: #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: #00ff00;
+            transition: width 0.1s linear, background 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen" class="container">
+        <h1 class="title">Set Master Arena</h1>
+        <p style="font-size: 1.2em; margin-bottom: 20px;">ศึกจ้าวแห่งเซต (คณิตศาสตร์ ม.4)</p>
+        <div class="instructions">
+            <strong>⚔️ วิธีการเล่น:</strong><br>
+            1. พิมพ์คำตอบที่ถูกต้องลงในช่องว่าง (เขียนติดกัน ไม่ต้องเว้นวรรค)<br>
+            2. ยิ่งตอบเร็ว ยิ่งได้คะแนนโบนัสความเร็วเยอะ<br>
+            3. มีทั้งหมด 10 ด่าน ด่านสุดท้ายคือ Boss ยากพิเศษ!<br>
+            4. <b>กฎเหล็ก:</b> หากตอบผิด หรือหมดเวลา เกมจะโอเวอร์และต้องเริ่มใหม่ตั้งแต่ด่าน 1 ทันที!
+        </div>
+        <button class="btn" onclick="startGame()">เข้าสู่สมรภูมิ</button>
+    </div>
+
+    <div id="game-screen" class="container hidden">
+        <div class="header-info">
+            <span id="stage-display">ด่าน: 1/10</span>
+            <span id="score-display">คะแนน: 0</span>
+        </div>
+        <div class="timer-bar-container">
+            <div id="timer-bar" class="timer-bar"></div>
+        </div>
+        <div id="boss-warning" class="boss-warning hidden">⚠️ คำเตือน: เข้าสู่ด่าน BOSS! ⚠️</div>
+        <div id="question-text" class="question-box">คำถามจะปรากฏที่นี่</div>
+        <p style="font-size: 0.8em; color: #aaa;">*ไม่ต้องพิมพ์เว้นวรรคคำตอบ เช่น {a,b}</p>
+        <input type="text" id="answer-input" placeholder="พิมพ์คำตอบที่นี่..." onkeypress="handleEnter(event)" autocomplete="off">
+        <br>
+        <button class="btn" onclick="checkAnswer()">ตอบ!</button>
+    </div>
+
+    <div id="end-screen" class="container hidden">
+        <h1 id="end-title" class="title" style="color: red; text-shadow: 0 0 10px red;">พ่ายแพ้!</h1>
+        <p id="end-message" style="font-size: 1.5em; margin: 20px 0;">คุณตอบผิด หรือหมดเวลา!</p>
+        <p style="font-size: 2em; color: #ffd700;">คะแนนรวม: <span id="final-score">0</span></p>
+        <button class="btn" onclick="restartGame()">เริ่มเล่นใหม่ทั้งหมด</button>
+    </div>
+
+    <script>
+        // --- ระบบสร้างเสียง (Web Audio API) ---
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'correct') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            } 
+            else if (type === 'wrong') {
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            }
+            else if (type === 'victory') {
+                oscillator.type = 'square';
+                let now = audioCtx.currentTime;
+                oscillator.frequency.setValueAtTime(400, now);
+                oscillator.frequency.setValueAtTime(500, now + 0.1);
+                oscillator.frequency.setValueAtTime(600, now + 0.2);
+                oscillator.frequency.setValueAtTime(800, now + 0.3);
+                
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.6);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.6);
+            }
+        }
+        // ----------------------------------------
+
+        const questions = [
+            { q: "กำหนด A = {1, 2, 3} จงหาค่าของ n(A)", a: "3", time: 15 },
+            { q: "จงเขียนเซต B แบบแจกแจงสมาชิก เมื่อ B เป็นเซตของสระในภาษาอังกฤษ (พิมพ์ตัวเล็ก)", a: "{a,e,i,o,u}", time: 20 },
+            { q: "ถ้า A = {a, b, c} ข้อใดคือสับเซตที่มีสมาชิก 0 ตัว?", a: "{}", time: 15 }, 
+            { q: "เซต B = {x | x เป็นจำนวนเต็มบวก และ x < 4} มีสับเซตทั้งหมดกี่เซต?", a: "8", time: 20 },
+            { q: "ถ้า n(A) = 4 แล้ว จำนวนสมาชิกของพาวเวอร์เซต P(A) คือเท่าใด?", a: "16", time: 15 },
+            { q: "กำหนด A = {1,2,3}, B = {3,4,5} จงหา A ∩ B", a: "{3}", time: 20 },
+            { q: "กำหนด U = {1,2,3,4,5}, A = {1,2} จงหา A' (คอมพลีเมนต์ของ A)", a: "{3,4,5}", time: 20 },
+            { q: "กำหนด A = {a,b,c}, B = {c,d,e} จงหา A - B", a: "{a,b}", time: 20 },
+            { q: "จากแผนภาพเวนน์ ถ้าแรเงาพื้นที่ทั้งหมดของวงกลม A และ B รวมกัน ตรงกับการดำเนินการใด? (ใช้ตัว U ใหญ่แทนยูเนียน)", a: "AUB", time: 15 },
+            { q: "(ระดับบอส) นักเรียน 100 คน ชอบคณิต 50 คน ชอบวิทย์ 40 คน ชอบทั้ง 2 วิชา 10 คน มีกี่คนที่ไม่ชอบทั้งสองวิชาเลย?", a: "20", time: 40 }
+        ];
+
+        let currentStage = 0;
+        let score = 0;
+        let timeLeft = 0;
+        let totalTime = 0;
+        let timerInterval;
+
+        function startGame() {
+            initAudio(); // เปิดใช้งานระบบเสียงเมื่อผู้เล่นกดปุ่ม
+            document.getElementById("start-screen").classList.add("hidden");
+            document.getElementById("game-screen").classList.remove("hidden");
+            currentStage = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentStage >= questions.length) {
+                gameVictory();
+                return;
+            }
+
+            const qData = questions[currentStage];
+            document.getElementById("stage-display").innerText = `ด่าน: ${currentStage + 1}/10`;
+            document.getElementById("score-display").innerText = `คะแนน: ${score}`;
+            document.getElementById("question-text").innerText = qData.q;
+            document.getElementById("answer-input").value = "";
+            document.getElementById("answer-input").focus();
+
+            if (currentStage === 9) {
+                document.getElementById("boss-warning").classList.remove("hidden");
+            } else {
+                document.getElementById("boss-warning").classList.add("hidden");
+            }
+
+            totalTime = qData.time;
+            timeLeft = totalTime;
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            const bar = document.getElementById("timer-bar");
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                let percentage = (timeLeft / totalTime) * 100;
+                bar.style.width = percentage + "%";
+
+                if (percentage > 50) bar.style.background = "#00ff00";
+                else if (percentage > 25) bar.style.background = "#ffcc00";
+                else bar.style.background = "#ff0000";
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, 100);
+        }
+
+        function handleEnter(e) {
+            if (e.key === "Enter") checkAnswer();
+        }
+
+        function checkAnswer() {
+            clearInterval(timerInterval);
+            let userAnswer = document.getElementById("answer-input").value.replace(/\s+/g, '').toLowerCase(); 
+            let correctAnswer = questions[currentStage].a.toLowerCase();
+            
+            if(correctAnswer === "{}" && (userAnswer === "เซตว่าง" || userAnswer === "emptyset")) {
+                 correctAnswer = userAnswer;
+            }
+
+            if (userAnswer === correctAnswer) {
+                playSound('correct'); // เล่นเสียงตอบถูก
+                let timeBonus = Math.floor((timeLeft / totalTime) * 100);
+                score += (100 + timeBonus);
+                currentStage++;
+                loadQuestion();
+            } else {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            playSound('wrong'); // เล่นเสียงตอบผิด
+            document.getElementById("game-screen").classList.add("hidden");
+            document.getElementById("end-screen").classList.remove("hidden");
+            document.getElementById("final-score").innerText = score;
+        }
+
+        function gameVictory() {
+            playSound('victory'); // เล่นเสียงชนะด่านบอส
+            document.getElementById("game-screen").classList.add("hidden");
+            document.getElementById("end-screen").classList.remove("hidden");
+            document.getElementById("end-title").innerText = "👑 SET MASTER 👑";
+            document.getElementById("end-title").style.color = "#ffd700";
+            document.getElementById("end-message").innerText = "ขอแสดงความยินดี! คุณคือจ้าวแห่งเซตตัวจริง!";
+            document.getElementById("final-score").innerText = score;
+        }
+
+        function restartGame() {
+            document.getElementById("end-screen").classList.add("hidden");
+            document.getElementById("end-title").innerText = "พ่ายแพ้!";
+            document.getElementById("end-title").style.color = "red";
+            document.getElementById("end-message").innerText = "คุณตอบผิด หรือหมดเวลา!";
+            document.getElementById("start-screen").classList.remove("hidden");
+            score = 0;
+            currentStage = 0;
+        }
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
